@@ -1,17 +1,21 @@
 from typing import Any, Dict, Optional, Union
 from sqlalchemy.orm import Session
+from passlib.context import CryptContext
 from app.crud.base import CRUDBase
 from app.models.models import User
 from app.schemas.schemas import UserCreate, UserUpdate
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     def get_by_email(self, db: Session, *, email: str) -> Optional[User]:
         return db.query(User).filter(User.email == email).first()
 
     def create(self, db: Session, *, obj_in: UserCreate) -> User:
+        hashed_password = pwd_context.hash(obj_in.password)
         db_obj = User(
             email=obj_in.email,
-            hashed_password=obj_in.password,  # In real app, hash the password
+            hashed_password=hashed_password,
             full_name=obj_in.full_name,
             is_active=obj_in.is_active,
         )
