@@ -1,5 +1,5 @@
 from typing import Any, Dict, Optional
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 import os
 
 class Settings(BaseSettings):
@@ -10,6 +10,11 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str = "sqlite:///./sql_app.db"
     
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Force SQLite for this project
+        self.DATABASE_URL = "sqlite:///./sql_app.db"
+    
     # CORS
     BACKEND_CORS_ORIGINS: list = [
         "http://localhost:3000",
@@ -17,7 +22,6 @@ class Settings(BaseSettings):
         "http://localhost:5000"
     ]
     
-    class Config:
-        case_sensitive = True
+    model_config = {"case_sensitive": True}
 
 settings = Settings()
