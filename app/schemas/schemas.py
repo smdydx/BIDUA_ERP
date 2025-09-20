@@ -1,6 +1,6 @@
-from typing import Optional, List
+from typing import Optional, List, Annotated
 from datetime import date, datetime
-from pydantic import BaseModel, EmailStr, condecimal, constr
+from pydantic import BaseModel, EmailStr, Field
 from decimal import Decimal
 
 # ---- Base ----
@@ -17,7 +17,7 @@ class UserBase(BaseModel):
     is_active: bool = True
 
 class UserCreate(UserBase):
-    password: constr(min_length=8)
+    password: Annotated[str, Field(min_length=8)]
 
 class UserUpdate(BaseModel):
     full_name: Optional[str] = None
@@ -79,11 +79,11 @@ class CategoryRead(CategoryBase, IDModel):
     pass
 
 class ProductBase(BaseModel):
-    sku: constr(max_length=64)
+    sku: Annotated[str, Field(max_length=64)]
     name: str
     description: Optional[str] = None
-    unit_price: condecimal(max_digits=12, decimal_places=2)
-    cost_price: Optional[condecimal(max_digits=12, decimal_places=2)] = None
+    unit_price: Annotated[Decimal, Field(max_digits=12, decimal_places=2)]
+    cost_price: Optional[Annotated[Decimal, Field(max_digits=12, decimal_places=2)]] = None
     is_active: bool = True
     category_id: Optional[int] = None
 
@@ -93,7 +93,7 @@ class ProductCreate(ProductBase):
 class ProductUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
-    unit_price: Optional[condecimal(max_digits=12, decimal_places=2)] = None
+    unit_price: Optional[Annotated[Decimal, Field(max_digits=12, decimal_places=2)]] = None
     is_active: Optional[bool] = None
 
 class ProductRead(ProductBase, IDModel):
@@ -115,14 +115,18 @@ class StockMovementBase(BaseModel):
     reason: Optional[str] = None
     occurred_at: Optional[datetime] = None
 
-class StockMovementRead(StockMovementBase, IDModel):
+class StockMovementRead(IDModel):
+    product_id: int
+    warehouse_id: int
+    change: int
+    reason: Optional[str] = None
     occurred_at: datetime
 
 # ---- Sales / Purchase ----
 class OrderItemBase(BaseModel):
     product_id: int
     quantity: int
-    unit_price: condecimal(max_digits=12, decimal_places=2)
+    unit_price: Annotated[Decimal, Field(max_digits=12, decimal_places=2)]
 
 class OrderBase(BaseModel):
     company_id: int
@@ -134,7 +138,7 @@ class SalesOrderCreate(OrderBase):
     items: List[OrderItemBase]
 
 class SalesOrderRead(OrderBase, IDModel):
-    total_amount: condecimal(max_digits=14, decimal_places=2)
+    total_amount: Annotated[Decimal, Field(max_digits=14, decimal_places=2)]
     items: List[OrderItemBase]
 
 # ---- Accounting ----
@@ -144,12 +148,12 @@ class AccountBase(BaseModel):
     account_type: str  # e.g. Asset, Liability, Equity, Revenue, Expense
 
 class AccountRead(AccountBase, IDModel):
-    balance: condecimal(max_digits=14, decimal_places=2) = Decimal('0')
+    balance: Annotated[Decimal, Field(max_digits=14, decimal_places=2)] = Decimal('0')
 
 class JournalEntryLine(BaseModel):
     account_id: int
-    debit: Optional[condecimal(max_digits=14, decimal_places=2)] = Decimal('0')
-    credit: Optional[condecimal(max_digits=14, decimal_places=2)] = Decimal('0')
+    debit: Optional[Annotated[Decimal, Field(max_digits=14, decimal_places=2)]] = Decimal('0')
+    credit: Optional[Annotated[Decimal, Field(max_digits=14, decimal_places=2)]] = Decimal('0')
     narration: Optional[str] = None
 
 class JournalEntryCreate(BaseModel):
