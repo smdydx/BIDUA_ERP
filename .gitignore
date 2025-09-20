@@ -1,7 +1,5 @@
 
-# Replit specific files
-.replit
-replit.nix
+
 .breakpoints
 .upm/
 
