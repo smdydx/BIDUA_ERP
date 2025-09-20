@@ -22,15 +22,16 @@ user_role = Table(
 
 class User(Base):
     __tablename__ = "users"
+
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String(255), unique=True, nullable=False, index=True)
-    hashed_password = Column(String(255), nullable=False)
     full_name = Column(String(255), index=True)  # Index for search
+    hashed_password = Column(String(255), nullable=False)
     is_active = Column(Boolean, default=True, index=True)  # Index for filtering
     created_at = Column(DateTime, default=datetime.utcnow, index=True)  # Index for sorting
 
     roles = relationship("Role", secondary=user_role, back_populates="users")
-    
+
     __table_args__ = (
         Index('idx_user_email_active', 'email', 'is_active'),  # Composite index
         Index('idx_user_created_active', 'created_at', 'is_active'),
@@ -62,7 +63,7 @@ class Address(Base):
     state = Column(String(100), index=True)  # Index for state searches
     postal_code = Column(String(32), index=True)  # Index for postal code searches
     country = Column(String(100), default="India", index=True)
-    
+
     __table_args__ = (
         Index('idx_address_city_state', 'city', 'state'),
         Index('idx_address_postal_country', 'postal_code', 'country'),
@@ -77,9 +78,9 @@ class Company(Base):
     contact_phone = Column(String(50), index=True)
     address_id = Column(Integer, ForeignKey("addresses.id"), index=True)
     created_at = Column(DateTime, default=datetime.utcnow, index=True)
-    
+
     address = relationship("Address")
-    
+
     __table_args__ = (
         Index('idx_company_name_active', 'name', 'created_at'),
     )
@@ -89,7 +90,7 @@ class Category(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(150), nullable=False)
     parent_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
-    
+
     parent = relationship("Category", remote_side=[id])
 
 class Product(Base):
@@ -102,9 +103,9 @@ class Product(Base):
     cost_price = Column(Numeric(12,2), index=True)
     is_active = Column(Boolean, default=True, index=True)
     category_id = Column(Integer, ForeignKey("categories.id"), index=True)
-    
+
     category = relationship("Category")
-    
+
     __table_args__ = (
         Index('idx_product_name_active', 'name', 'is_active'),
         Index('idx_product_category_active', 'category_id', 'is_active'),
@@ -128,7 +129,7 @@ class StockMovement(Base):
 
     product = relationship("Product")
     warehouse = relationship("Warehouse")
-    
+
     __table_args__ = (
         Index('idx_stock_product_date', 'product_id', 'occurred_at'),
         Index('idx_stock_warehouse_date', 'warehouse_id', 'occurred_at'),
@@ -145,7 +146,7 @@ class SalesOrder(Base):
 
     company = relationship("Company")
     items = relationship("SalesOrderItem", cascade="all, delete-orphan")
-    
+
     __table_args__ = (
         Index('idx_order_company_date', 'company_id', 'order_date'),
         Index('idx_order_due_date', 'due_date'),
@@ -161,7 +162,7 @@ class SalesOrderItem(Base):
     unit_price = Column(Numeric(12,2), nullable=False)
 
     product = relationship("Product")
-    
+
     __table_args__ = (
         Index('idx_orderitem_order_product', 'sales_order_id', 'product_id'),
     )
@@ -179,7 +180,7 @@ class JournalEntry(Base):
     id = Column(Integer, primary_key=True)
     date = Column(Date, nullable=False)
     narration = Column(Text)
-    
+
     lines = relationship("JournalEntryLine", cascade="all, delete-orphan")
 
 class JournalEntryLine(Base):
@@ -202,7 +203,7 @@ class Employee(Base):
     phone = Column(String(50), index=True)
     emp_code = Column(String(64), unique=True, index=True)
     joined_at = Column(Date, index=True)
-    
+
     __table_args__ = (
         Index('idx_employee_name', 'first_name', 'last_name'),
         Index('idx_employee_joined', 'joined_at'),
@@ -217,7 +218,7 @@ class Attendance(Base):
     check_out = Column(DateTime, index=True)
 
     employee = relationship("Employee")
-    
+
     __table_args__ = (
         Index('idx_attendance_emp_date', 'employee_id', 'date'),
         Index('idx_attendance_date_range', 'date', 'check_in', 'check_out'),
