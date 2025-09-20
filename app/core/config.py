@@ -33,14 +33,7 @@ class Settings(BaseSettings):
     
     # CORS - Allow more origins for production
     BACKEND_CORS_ORIGINS: List[str] = [
-        "http://localhost:3000",
-        "http://localhost:8000",
-        "http://localhost:5000",
-        "http://0.0.0.0:8000",
-        "https://localhost:3000",
-        "https://localhost:8000",
-        "https://localhost:5000",
-        "*"  # Allow all origins - configure properly in production
+        "*"  # Allow all origins for development
     ]
     
     model_config = {"case_sensitive": True}

@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
 from app.api.v1.api import api_router
 from app.core.config import get_settings
@@ -47,11 +48,9 @@ app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
     description="High-performance FastAPI backend optimized for 1000+ concurrent users",
-    openapi_url="/openapi.json",  # Simple path instead of dynamic
+    openapi_url="/openapi.json",
     docs_url="/docs",
-    redoc_url="/redoc",
-    # Performance optimizations
-    generate_unique_id_function=lambda route: f"{route.tags[0]}-{route.name}" if route.tags else route.name
+    redoc_url="/redoc"
 )
 
 # Add all middleware in correct order (order matters!)
