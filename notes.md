@@ -43,7 +43,7 @@ The application provides the following API endpoint groups:
 - The backend server automatically reloads on file changes
 
 ## Deployment
-The project is configured for autoscale deployment on Replit, which is ideal for this stateless API backend.
+The project is configured for autoscale deployment, which is ideal for this stateless API backend.
 
 ## Architecture Decisions
 - **Date**: September 20, 2025
