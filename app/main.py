@@ -47,7 +47,7 @@ app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
     description="High-performance FastAPI backend optimized for 1000+ concurrent users",
-    openapi_url=f"{settings.API_V1_STR}/openapi.json",
+    openapi_url="/openapi.json",  # Simple path instead of dynamic
     docs_url="/docs",
     redoc_url="/redoc",
     # Performance optimizations
